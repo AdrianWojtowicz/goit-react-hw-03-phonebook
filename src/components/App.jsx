@@ -15,11 +15,24 @@ export class App extends Component {
     ],
     filter: "",
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem("contacts");
+    this.setState({ contacts: JSON.parse(contacts) });
+  }
+
+  componentDidUpdate(nextProps, nextState) {
+    if (nextState.contacts !== this.state.contacts ) {
+      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
+    }
+  }
+
   searchName = (value) => {
     return this.state.contacts.find(
       (item) => item.name.toUpperCase() === value.toUpperCase()
     );
   };
+
   formSubmitHandler = (data) => {
     const { name } = data;
     if (this.searchName(name)) {
@@ -29,9 +42,11 @@ export class App extends Component {
       this.setState((state) => ({ contacts: [...state.contacts, contact] }));
     }
   };
+
   changeFilter = (e) => {
     this.setState({ filter: e.currentTarget.value });
   };
+
   getVisibleContacts = () => {
     const { contacts, filter } = this.state;
     if (!filter) {
